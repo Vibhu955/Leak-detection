@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify
 import numpy as np
 import tensorflow as tf
 import joblib
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 
 #  Load trained LSTM model
 model = tf.keras.models.load_model("lstm_pipeline_leak_model.h5")
