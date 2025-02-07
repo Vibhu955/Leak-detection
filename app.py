@@ -54,24 +54,24 @@ def predict():
     
 current_signal = 0  # Default state
 
-@app.route('/set_signal', methods=['POST'])
-def set_signal():
-    global current_signal
-    data = request.json
-    if "signal" in data and data["signal"] in [0, 1]:
-        current_signal = data["signal"]
-        return jsonify({"message": f"Signal set to {current_signal}"})
-    return jsonify({"error": "Invalid signal, send 0 or 1"}), 400
+signal_state = 0  # Global variable to store the signal
 
 @app.route('/get_signal', methods=['GET'])
 def get_signal():
-    return jsonify({"signal": current_signal})
+    return jsonify(str(signal_state))  # Return as string for ESP32
+
+@app.route('/send_signal', methods=['POST'])
+def send_signal():
+    global signal_state
+    data = request.json
+    signal_state = data.get("signal", 0)
+    return jsonify({"message": "Signal updated", "current_signal": signal_state})
 
 @app.route('/reset_signal', methods=['POST'])
 def reset_signal():
-    global current_signal
-    current_signal = 0
-    return jsonify({"message": "Signal reset to 0"})
+    global signal_state
+    signal_state = 0
+    return jsonify({"message": "Signal reset", "current_signal": signal_state})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
