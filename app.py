@@ -52,7 +52,7 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@app.route('/send_signal', methods=['POST'])
+@app.route('/send_signal', methods=['GET','POST'])
 def send_signal():
     data = request.get_json()
     signal = data.get("signal")
