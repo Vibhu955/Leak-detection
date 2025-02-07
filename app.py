@@ -52,17 +52,29 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@app.route('/send_signal', methods=['GET','POST'])
-def send_signal():
-    data = request.get_json()
-    signal = data.get("signal")
-    
-    if signal not in [0, 1]:
-        return jsonify({"error": "Invalid signal. Use 0 or 1"}), 400
-    
-    print(f"Signal sent: {signal}") 
-    
-    return jsonify({"message": f"Signal {signal} sent"}), 200
+current_signal = 0  # Default state
+
+@app.route('/set_signal', methods=['POST'])
+def set_signal():
+    global current_signal
+    data = request.json
+    if "signal" in data and data["signal"] in [0, 1]:
+        current_signal = data["signal"]
+        return jsonify({"message": f"Signal set to {current_signal}"})
+    return jsonify({"error": "Invalid signal, send 0 or 1"}), 400
+
+@app.route('/get_signal', methods=['GET'])
+def get_signal():
+    return jsonify({"signal": current_signal})
+
+@app.route('/reset_signal', methods=['POST'])
+def reset_signal():
+    global current_signal
+    current_signal = 0
+    return jsonify({"message": "Signal reset to 0"})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
