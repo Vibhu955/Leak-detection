@@ -2,6 +2,10 @@ from flask import Flask, request, jsonify
 import numpy as np
 import tensorflow as tf
 import joblib
+from flask_cors import CORS
+
+app = Flask(__name__) #Flask object instantiation
+cors= CORS(app) #CORS object instantiation
 
 #  Load trained LSTM model
 model = tf.keras.models.load_model("lstm_pipeline_leak_model.h5")
@@ -9,7 +13,6 @@ model = tf.keras.models.load_model("lstm_pipeline_leak_model.h5")
 #  Load the scaler (Ensure you save it in `leakage.ipynb` as `scaler.pkl`)
 scaler = joblib.load("scaler.pkl")
 
-app = Flask(__name__)
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -19,6 +22,7 @@ def predict():
             return jsonify({"error": "Request must be in JSON format"}), 415
         
         data = request.get_json()
+        print(data)
         if not data:
             return jsonify({"error": "Empty JSON request"}), 400
         
@@ -50,5 +54,5 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
 
