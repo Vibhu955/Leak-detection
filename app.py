@@ -61,13 +61,22 @@ signal_state = 0  # Global variable to store the signal
 
 @app.route('/get_signal', methods=['GET'])
 def get_signal():
-    return jsonify(str(signal_state))  # Return as string for ESP32
+    return jsonify(str(signal_state))  # Return as string for ESP32 compatibility
 
 @app.route('/send_signal', methods=['POST'])
 def send_signal():
     global signal_state
-    signal_state = 1
-    return jsonify({"message": "Signal updated", "current_signal": signal_state})
+    data = request.json
+    new_signal = data.get("signal")
+
+    if new_signal not in [0, 1]:  # Ensure only 0 or 1 is allowed
+        return jsonify({"error": "Invalid input. Only 0 or 1 is allowed."}), 400
+
+    if new_signal != signal_state:  # Toggle only when different input is received
+        signal_state = new_signal
+        return jsonify({"message": "Signal updated", "current_signal": signal_state})
+
+    return jsonify({"message": "No change", "current_signal": signal_state})
 
 @app.route('/reset_signal', methods=['POST'])
 def reset_signal():
