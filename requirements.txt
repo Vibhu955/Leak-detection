@@ -6,4 +6,4 @@ scipy
 pandas
 requests
 gunicorn  # Required for Render
-flask_cors
+flask-cors
