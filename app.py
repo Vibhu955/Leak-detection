@@ -63,7 +63,8 @@ def get_signal():
 @app.route('/send_signal', methods=['POST'])
 def send_signal():
     global signal_state
-    signal_state = 1
+    data = request.json
+    signal_state = data.get("signal", 0)
     return jsonify({"message": "Signal updated", "current_signal": signal_state})
 
 @app.route('/reset_signal', methods=['POST'])
