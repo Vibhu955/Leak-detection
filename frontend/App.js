@@ -56,13 +56,16 @@ export default function App() {
 
   const sendSignal = async (signal) => {
     try {
-      const response = await fetch("http://192.168.1.100/control", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ state: signal }), // Send signal as a string
-      });
+      const response = await fetch(
+        "https://leak-detection.onrender.com/send_signal",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ signal }), // Sending as { "signal": "1" } or { "signal": "0" }
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -123,7 +126,7 @@ export default function App() {
           onPress={() => {
             setIsWaterFlowing(true);
             setOutput("1"); // Set output as a string
-            sendSignal("1"); // Send "1" as a string
+            sendSignal("1"); // Send { "signal": "1" }
           }}
         >
           <Text style={styles.buttonText}>On</Text>
@@ -133,7 +136,7 @@ export default function App() {
           onPress={() => {
             setIsWaterFlowing(false);
             setOutput("0"); // Set output as a string
-            sendSignal("0"); // Send "0" as a string
+            sendSignal("0"); // Send { "signal": "0" }
           }}
         >
           <Text style={styles.buttonText}>Off</Text>
@@ -203,3 +206,4 @@ const styles = StyleSheet.create({
     color: "green",
   },
 });
+
