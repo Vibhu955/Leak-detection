@@ -66,7 +66,7 @@ def send_signal():
     data = request.json
     new_signal = data.get("signal")
 
-    if new_signal not in [0, 1]:  # Ensure only 0 or 1 is allowed
+    if new_signal not in ["0", "1"]:  # Ensure only 0 or 1 is allowed
         return jsonify({"error": "Invalid input. Only 0 or 1 is allowed."}), 400
 
     if new_signal != signal_state:  # Toggle only when different input is received
