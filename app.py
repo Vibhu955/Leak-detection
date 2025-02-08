@@ -9,6 +9,8 @@ cors= CORS(app) #CORS object instantiation
 
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress warnings and info messages
+
 #  Load trained LSTM model
 model = tf.keras.models.load_model("lstm_pipeline_leak_model.h5")
 
