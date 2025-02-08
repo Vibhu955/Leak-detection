@@ -7,6 +7,8 @@ from flask_cors import CORS
 app = Flask(__name__) #Flask object instantiation
 cors= CORS(app) #CORS object instantiation
 
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  
 #  Load trained LSTM model
 model = tf.keras.models.load_model("lstm_pipeline_leak_model.h5")
 
@@ -52,7 +54,27 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+current_signal = 0  # Default state
+
+signal_state = 0  # Global variable to store the signal
+
+@app.route('/get_signal', methods=['GET'])
+def get_signal():
+    return jsonify(str(signal_state))  # Return as string for ESP32
+
+@app.route('/send_signal', methods=['POST'])
+def send_signal():
+    global signal_state
+    signal_state = 1
+    return jsonify({"message": "Signal updated", "current_signal": signal_state})
+
+@app.route('/reset_signal', methods=['POST'])
+def reset_signal():
+    global signal_state
+    signal_state = 0
+    return jsonify({"message": "Signal reset", "current_signal": signal_state})
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
