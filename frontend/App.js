@@ -63,7 +63,7 @@ export default function App() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ signal }), // Sending as { "signal": "1" } or { "signal": "0" }
+          body: JSON.stringify({ signal }),
         }
       );
 
@@ -121,26 +121,29 @@ export default function App() {
       </Animated.View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            setIsWaterFlowing(true);
-            setOutput("1"); // Set output as a string
-            sendSignal("1"); // Send { "signal": "1" }
-          }}
-        >
-          <Text style={styles.buttonText}>On</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            setIsWaterFlowing(false);
-            setOutput("0"); // Set output as a string
-            sendSignal("0"); // Send { "signal": "0" }
-          }}
-        >
-          <Text style={styles.buttonText}>Off</Text>
-        </TouchableOpacity>
+        {isWaterFlowing ? (
+          <TouchableOpacity
+            style={[styles.button, styles.offButton]}
+            onPress={() => {
+              setIsWaterFlowing(false);
+              setOutput("0");
+              sendSignal("0");
+            }}
+          >
+            <Text style={styles.buttonText}>Off</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={[styles.button, styles.onButton]}
+            onPress={() => {
+              setIsWaterFlowing(true);
+              setOutput("1");
+              sendSignal("1");
+            }}
+          >
+            <Text style={styles.buttonText}>On</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <Text style={styles.outputText}>Output: {output}</Text>
@@ -151,28 +154,32 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f4f4f4",
     alignItems: "center",
     justifyContent: "center",
+    padding: 20,
   },
   title: {
     fontSize: 32,
     fontWeight: "bold",
     marginBottom: 20,
+    color: "#333",
   },
   input: {
-    width: 200,
-    height: 40,
-    borderColor: "gray",
+    width: 250,
+    height: 50,
+    borderColor: "#ddd",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     marginBottom: 10,
-    paddingLeft: 10,
+    paddingLeft: 15,
+    backgroundColor: "#fff",
   },
   leakageText: {
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 10,
+    color: "#ff4d4d",
   },
   animationContainer: {
     width: 300,
@@ -185,14 +192,25 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   buttonContainer: {
-    flexDirection: "row",
     marginTop: 20,
   },
   button: {
-    backgroundColor: "#007BFF",
-    padding: 15,
-    borderRadius: 10,
-    marginHorizontal: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    marginVertical: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  onButton: {
+    backgroundColor: "#28a745",
+  },
+  offButton: {
+    backgroundColor: "#dc3545",
   },
   buttonText: {
     color: "#fff",
@@ -203,7 +221,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginTop: 15,
-    color: "green",
+    color: "#333",
   },
 });
-
