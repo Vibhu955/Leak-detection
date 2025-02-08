@@ -6,9 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import Animated, {
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { useSharedValue } from "react-native-reanimated";
 import Animation from "./Animation"; // Ensure this path is correct
 
 export default function App() {
@@ -17,7 +15,7 @@ export default function App() {
   const [sensor2, setSensor2] = useState("");
   const [pump, setPump] = useState("");
   const [leakage, setLeakage] = useState(null);
-  const [output, setOutput] = useState(0); // 1 for On, 0 for Off
+  const [output, setOutput] = useState("0"); // "1" for On, "0" for Off (as strings)
 
   const opacity = useSharedValue(0);
 
@@ -25,7 +23,7 @@ export default function App() {
     const data = {
       Sensor1_Pressure: parseFloat(sensor1) || 0,
       Sensor2_Pressure: parseFloat(sensor2) || 0,
-      Pump_Pressure: parseFloat(pump) || 0
+      Pump_Pressure: parseFloat(pump) || 0,
     };
 
     try {
@@ -53,6 +51,27 @@ export default function App() {
     } catch (error) {
       console.error("Error:", error);
       setLeakage("Error fetching data");
+    }
+  };
+
+  const sendSignal = async (signal) => {
+    try {
+      const response = await fetch("http://192.168.1.100/control", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ state: signal }), // Send signal as a string
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.text();
+      console.log("Signal sent successfully:", result);
+    } catch (error) {
+      console.error("Error sending signal:", error);
     }
   };
 
@@ -103,7 +122,8 @@ export default function App() {
           style={styles.button}
           onPress={() => {
             setIsWaterFlowing(true);
-            setOutput(1);
+            setOutput("1"); // Set output as a string
+            sendSignal("1"); // Send "1" as a string
           }}
         >
           <Text style={styles.buttonText}>On</Text>
@@ -112,7 +132,8 @@ export default function App() {
           style={styles.button}
           onPress={() => {
             setIsWaterFlowing(false);
-            setOutput(0);
+            setOutput("0"); // Set output as a string
+            sendSignal("0"); // Send "0" as a string
           }}
         >
           <Text style={styles.buttonText}>Off</Text>
