@@ -7,14 +7,44 @@ export default function App() {
   const [isWaterFlowing, setIsWaterFlowing] = useState(false);
   const opacity = useSharedValue(0);
 
-  const handleOnPress = () => {
-    setIsWaterFlowing(true);
-    opacity.value = withTiming(1, { duration: 1000, easing: Easing.inOut(Easing.ease) });
+  const handleOnPress = async () => {
+    try {
+      const response = await fetch('https://leak-detection.onrender.com/send_signal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        setIsWaterFlowing(true);
+        opacity.value = withTiming(1, { duration: 1000, easing: Easing.inOut(Easing.ease) });
+      } else {
+        console.error('Failed to toggle water flow on');
+      }
+    } catch (error) {
+      console.error('Error toggling water flow on:', error);
+    }
   };
 
-  const handleOffPress = () => {
-    setIsWaterFlowing(false);
-    opacity.value = withTiming(0, { duration: 1000, easing: Easing.inOut(Easing.ease) });
+  const handleOffPress = async () => {
+    try {
+      const response = await fetch('https://leak-detection.onrender.com/send_signal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        setIsWaterFlowing(false);
+        opacity.value = withTiming(0, { duration: 1000, easing: Easing.inOut(Easing.ease) });
+      } else {
+        console.error('Failed to toggle water flow off');
+      }
+    } catch (error) {
+      console.error('Error toggling water flow off:', error);
+    }
   };
 
   return (
